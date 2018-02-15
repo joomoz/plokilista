@@ -2,8 +2,8 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-  "title": "Plokin otsikko",
-  "author": "T. Soini",
-  "url": "ploki.fi",
+  "title": "Blogi",
+  "author": "Kirjoittelija",
+  "url": "blog.fi",
   "likes": 0
 }
