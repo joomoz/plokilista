@@ -25,6 +25,10 @@ usersRouter.post('/', async (request, response) => {
       return response.status(400).json({ error: 'username must be unique' })
     }
 
+    if ( body.password.length < 3 ) {
+      return response.status(400).json({ error: 'password is too short (<3)' })
+    }
+
     const saltRounds = 10
     const passwordHash = await bcrypt.hash(body.password, saltRounds)
 

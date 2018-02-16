@@ -31,7 +31,9 @@ app.use(middleware.error)
 const server = http.createServer(app)
 const PORT = config.port
 server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+  if ( !process.env.NODE_ENV === 'test' ) {
+    console.log(`Server running on port ${PORT}`)
+  }
 })
 
 server.on('close', () => {

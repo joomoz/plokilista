@@ -5,7 +5,7 @@ const User = require('../models/user')
 const { initialBlogs, format, nonExistingId, blogsInDb, usersInDb } = require('./test_helper')
 
 
-describe('when there is initially one user at db', async () => {
+describe.only('when there is initially one user at db', async () => {
   beforeAll(async () => {
     await User.remove({})
     const user = new User({ username: 'root', password: 'sekret' })
@@ -54,6 +54,45 @@ describe('when there is initially one user at db', async () => {
     expect(usersAfterOperation.length).toBe(usersBeforeOperation.length)
   })
 
+  test('new user with short password wont be accepted', async () => {
+    const usersBeforeOperation = await usersInDb()
+
+    const newUser = {
+      username: 'mojo',
+      name: 'Joonaas',
+      password: 'a1'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body).toEqual({ error: 'password is too short (<3)'})
+    const usersAfterOperation = await usersInDb()
+    expect(usersAfterOperation.length).toBe(usersBeforeOperation.length)
+  })
+
+  test('adult value is set to true if not given', async () => {
+    const usersBeforeOperation = await usersInDb()
+
+    const newUser = {
+      username: 'new username',
+      name: 'new name',
+      password: 'abcd'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.adult).toEqual(true)
+    const usersAfterOperation = await usersInDb()
+    expect(usersAfterOperation.length).toBe(usersBeforeOperation.length + 1)
+  })
 })
 
 afterAll(() => {
