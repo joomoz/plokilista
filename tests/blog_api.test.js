@@ -137,6 +137,26 @@ describe('POST tests:', () => {
     expect(ourBlog[0].likes).toBe(0)
     expect(response.body.length).toBe(initialBlogs.body.length + 1)
   })
+
+  test('blog without title and url is not saved ', async () => {
+    const newBlog = {
+      author: "J. Moilanen",
+      likes: 99
+    }
+  
+    const initialBlogs = await api
+      .get('/api/blogs')
+  
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+  
+    const response = await api
+      .get('/api/blogs')
+
+    expect(response.body.length).toBe(initialBlogs.body.length)
+  })
 })
 
 afterAll(() => {

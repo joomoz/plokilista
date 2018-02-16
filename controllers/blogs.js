@@ -17,14 +17,19 @@ blogsRouter.get('/', async (request, response) => {
 })
 
 blogsRouter.post('/', async (request, response) => {
-  const blog = new Blog(request.body)
+  try {
+    const blog = new Blog(request.body)
 
-  if (blog.title === undefined) {
-    return response.status(400).json({ error: 'title missing' })
+    if (blog.title === undefined || blog.url === undefined) {
+      return response.status(400).json({ error: 'title and/or url missing' })
+    }
+
+    const savedBlog = await blog.save()
+    response.status(201).json(formatBlog(savedBlog))
+  } catch (exception) {
+    console.log(exception)
+    response.status(500).json({ error: 'problems with POST...' })
   }
-
-  const savedBlog = await blog.save()
-  response.status(201).json(formatBlog(savedBlog))
 })
 
 // blogsRouter.get('/:id', (request, response) => {
