@@ -32,31 +32,32 @@ blogsRouter.post('/', async (request, response) => {
   }
 })
 
-// blogsRouter.get('/:id', (request, response) => {
-//   Note
-//     .findById(request.params.id)
-//     .then(note => {
-//       if (note) {
-//         response.json(formatNote(note))
-//       } else {
-//         response.status(404).end()
-//       }
-//     })
-//     .catch(error => {
-//       response.status(400).send({ error: 'malformatted id' })
-//     })
-// })
+blogsRouter.get('/:id', async (request, response) => {
+  try {
+    const blog = await Blog.findById(request.params.id)
 
-// blogsRouter.delete('/:id', (request, response) => {
-//   Note
-//     .findByIdAndRemove(request.params.id)
-//     .then(result => {
-//       console.log(result)
-//       response.status(204).end()
-//     })
-//     .catch(error => {
-//       response.status(400).send({ error: 'malformatted id' })
-//     })
-// })
+    if (blog) {
+      response.json(formatBlog(blog))
+    } else {
+      response.status(404).end()
+    }
+
+  } catch (exception) {
+    console.log(exception)
+    response.status(400).send({ error: 'malformatted id' })
+  }
+})
+
+blogsRouter.delete('/:id', async (request, response) => {
+  try {
+    await Blog.findByIdAndRemove(request.params.id)
+    
+    response.status(204).end()
+  } catch (exception) {
+    console.log(exception)
+    response.status(400).send({ error: 'Unable to delete: malformatted id' })
+  }
+  
+})
 
 module.exports = blogsRouter

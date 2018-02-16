@@ -104,6 +104,33 @@ describe('POST tests:', () => {
   })
 })
 
+describe('DELETE tests:', () => {
+  let addedBlog
+
+    beforeAll(async () => {
+      addedBlog = new Blog({
+        title: "Otsikko",
+        author: "J. Moilanen",
+        url: "www.joomoi.io"
+      })
+      await addedBlog.save()
+    })
+
+  test('DELETE /api/notes/:id succeeds with proper statuscode', async () => {
+    const blogsAtStart = await blogsInDb()
+
+    await api
+      .delete(`/api/blogs/${addedBlog._id}`)
+      .expect(204)
+
+    const blogsAfterOperation = await blogsInDb()
+    const titles = blogsAfterOperation.map(b => b.title)
+
+    expect(titles).not.toContain(addedBlog.title)
+    expect(blogsAfterOperation.length).toBe(blogsAtStart.length - 1)
+  })
+})
+
 afterAll(() => {
   server.close()
 })
