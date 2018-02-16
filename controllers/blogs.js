@@ -11,17 +11,17 @@ const formatBlog = (blog) => {
   }
 }
 
-blogsRouter.get('/', (request, response) => {
-  Blog
-    .find({})
-    .then(blogs => {
-      response.json(blogs.map(formatBlog))
-    })
+blogsRouter.get('/', async (request, response) => {
+  const blogs = await Blog.find({})
+  response.json(blogs.map(formatBlog))
 })
 
 blogsRouter.post('/', (request, response) => {
   const blog = new Blog(request.body)
 
+  // const savedBlog = await Blog.save(blog)
+  // response.status(201).json(formatBlog(savedBlog))
+  
   blog
     .save()
     .then(blog => {
@@ -30,7 +30,6 @@ blogsRouter.post('/', (request, response) => {
     .then(formattedBlog => {
       response.status(201).json(formattedBlog)
     })
-
 })
 
 // blogsRouter.get('/:id', (request, response) => {
