@@ -62,27 +62,81 @@ beforeAll(async () => {
   await Promise.all(promiseArray)
 })
 
-test('blogs are returned as json', async () => {
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
+describe('GET tests:', () => {
+
+  test('blogs are returned as json', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
+
+  test('number of blogs is correct', async () => {
+    const response = await api
+      .get('/api/blogs')
+
+    expect(response.body.length).toBe(initialBlogs.length)
+  })
+
+  test('one of the blogs is about React patterns', async () => {
+    const response = await api
+      .get('/api/blogs')
+
+    const contents = response.body.map(r => r.title)
+
+    expect(contents).toContain('React patterns')
+  })
 })
 
-test('number of blogs is correct', async () => {
-  const response = await api
-    .get('/api/blogs')
+describe('POST tests:', () => {
+  test('a valid blog can be added ', async () => {
+    const newBlog = {
+      title: "What the flexbox?",
+      author: "Wes Bos",
+      url: "https://flexbox.io/",
+      likes: 99
+    }
 
-  expect(response.body.length).toBe(initialBlogs.length)
-})
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
 
-test('one of the blogs is about React patterns', async () => {
-  const response = await api
-    .get('/api/blogs')
+    const response = await api
+      .get('/api/blogs')
 
-  const contents = response.body.map(r => r.title)
+    const titles = response.body.map(r => r.title)
 
-  expect(contents).toContain('React patterns')
+    expect(response.body.length).toBe(initialBlogs.length + 1)
+    expect(titles).toContain('What the flexbox?')
+  })
+
+  test('blog without likes is added with 0 likes ', async () => {
+    const newBlog = {
+      title: "Title",
+      author: "J. Moilanen",
+      url: "www.fi.com",
+    }
+  
+    const initialBlogs = await api
+      .get('/api/blogs')
+  
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+  
+    const response = await api
+      .get('/api/blogs')
+
+    const ourBlog = response.body.filter(blog => blog.title === 'Title');
+    // console.log("ourBlog:", ourBlog)
+    // console.log("likes:", ourBlog[0].likes)
+
+    expect(ourBlog[0].likes).toBe(0)
+    expect(response.body.length).toBe(initialBlogs.body.length + 1)
+  })
 })
 
 afterAll(() => {

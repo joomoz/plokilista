@@ -16,20 +16,15 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs.map(formatBlog))
 })
 
-blogsRouter.post('/', (request, response) => {
+blogsRouter.post('/', async (request, response) => {
   const blog = new Blog(request.body)
 
-  // const savedBlog = await Blog.save(blog)
-  // response.status(201).json(formatBlog(savedBlog))
-  
-  blog
-    .save()
-    .then(blog => {
-      return formatBlog(blog)
-    })
-    .then(formattedBlog => {
-      response.status(201).json(formattedBlog)
-    })
+  if (blog.title === undefined) {
+    return response.status(400).json({ error: 'title missing' })
+  }
+
+  const savedBlog = await blog.save()
+  response.status(201).json(formatBlog(savedBlog))
 })
 
 // blogsRouter.get('/:id', (request, response) => {
