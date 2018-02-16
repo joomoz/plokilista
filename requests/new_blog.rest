@@ -3,7 +3,8 @@ Content-Type: application/json
 
 {
   "title": "Blogi",
-  "author": "Kirjoittelija",
-  "url": "blog.fi",
-  "likes": 0
+  "author": "Authori",
+  "url": "https://blog.fi",
+  "likes": 0,
+  "userId": "5a86da0c57886f6b2543f9f7"
 }
