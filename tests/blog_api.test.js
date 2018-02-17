@@ -45,7 +45,7 @@ describe('POST tests:', () => {
       title: "What the flexbox?",
       author: "Wes Bos",
       url: "https://flexbox.io/",
-      likes: 99
+      likes: 99,
     }
 
     await api

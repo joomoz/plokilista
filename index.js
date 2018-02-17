@@ -5,9 +5,11 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const mongoose = require('mongoose')
 const middleware = require('./utils/middleware')
-const notesRouter = require('./controllers/blogs')
 const config = require('./utils/config')
+const notesRouter = require('./controllers/blogs')
 const usersRouter = require('./controllers/users')
+const loginRouter = require('./controllers/login')
+
 
 mongoose
   .connect(config.mongoUrl)
@@ -26,6 +28,7 @@ app.use(middleware.logger)
 
 app.use('/api/blogs', notesRouter)
 app.use('/api/users', usersRouter)
+app.use('/api/login', loginRouter)
 app.use(middleware.error)
 
 const server = http.createServer(app)
